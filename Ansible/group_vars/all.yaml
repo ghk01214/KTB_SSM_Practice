@@ -1,0 +1,6 @@
+ansible_connection: aws_ssm
+ansible_user: ec2-user
+ansible_aws_ssm_region: ap-northeast-2
+ansible_aws_ssm_bucket_name: ktb-ssm
+ansible_remote_temp: /tmp/.ansible/tmp
+ansible_home_dir: /home/ec2-user

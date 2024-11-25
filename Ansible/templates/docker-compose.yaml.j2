@@ -1,0 +1,16 @@
+services:
+  {{ ansible_host_namespace }}:
+    platform: linux/amd64
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+    networks:
+      - {{ ansible_network_namespace }}
+      
+networks:
+  {{ ansible_network_namespace }}:
+    driver: overlay
+    attachable: true

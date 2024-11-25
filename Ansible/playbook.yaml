@@ -1,0 +1,56 @@
+- hosts: ssm
+  tasks:
+  - name: Install environment
+    dnf:
+      name:
+        - docker
+        - pip
+      state: latest
+
+  - name: Change Docker group
+    shell: |
+      newgrp docker
+      sudo usermod -aG docker ec2-user
+
+  - name: Start Docker
+    systemd:
+      name: docker
+      state: started
+
+  - name: Install docker-compose
+    get_url:
+      url: https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}
+      dest: /usr/local/bin/docker-compose
+      mode: '0755'
+      force: yes
+
+  - name: Add docker-compose execution permission
+    shell: chmod +x /usr/local/bin/docker-compose
+  
+  - name: Restart Docker
+    systemd:
+      name: docker
+      state: restarted
+      enabled: yes
+
+  - name: Write docker-compose.yaml
+    template:
+      src: docker-compose.yaml.j2
+      dest: "{{ ansible_home_dir }}/docker-compose.yaml"
+
+  - name: Initialize Docker Swarm
+    shell: docker swarm init
+    ignore_errors: yes
+
+  - name: Start docker-compose.yaml
+    shell: docker-compose up -d
+    args:
+      chdir: "{{ ansible_home_dir }}"
+
+  - name: Execute docker ps using shell
+    shell: docker ps -a
+    register: docker_ps_output
+
+  - name: Display shell command output
+    debug:
+      var: docker_ps_output.stdout_lines

@@ -1,0 +1,2 @@
+ansible_host_namespace: nginx
+ansible_network_namespace: nginx
