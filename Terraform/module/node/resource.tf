@@ -7,7 +7,7 @@ resource "aws_instance" "main" {
   iam_instance_profile   = "ec2-ssm"
   
   tags = {
-    Name = "KTB SSM Public",
+    Name = "KTB SSM Node",
     Environment = "SSM"
   }
 }
